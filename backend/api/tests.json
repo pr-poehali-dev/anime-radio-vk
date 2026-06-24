@@ -1,0 +1,23 @@
+{
+  "tests": [
+    {
+      "name": "Get messages",
+      "method": "GET",
+      "path": "/?action=messages",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Demo login",
+      "method": "POST",
+      "path": "/?action=login",
+      "body": {"name": "Тестовый Отаку"},
+      "expectedStatus": 200
+    },
+    {
+      "name": "Me without token",
+      "method": "GET",
+      "path": "/?action=me",
+      "expectedStatus": 200
+    }
+  ]
+}
