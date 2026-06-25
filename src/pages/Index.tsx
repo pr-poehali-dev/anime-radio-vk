@@ -64,8 +64,27 @@ const Index = () => {
     }
   }, []);
 
+  // Обработка редиректа от ВКонтакте (?code=...)
   useEffect(() => {
-    refreshMe();
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    if (!code) {
+      refreshMe();
+      return;
+    }
+    // Убираем code из URL сразу
+    window.history.replaceState({}, '', window.location.pathname);
+    const redirect_uri = window.location.origin + window.location.pathname;
+    api.vkLogin({ code, redirect_uri }).then((res) => {
+      if (res.user) {
+        setToken(res.user.token);
+        setUser(res.user);
+        toast({ title: 'Добро пожаловать!', description: res.user.name });
+        refreshMe();
+      } else {
+        toast({ title: 'Ошибка входа через ВКонтакте', description: res.error || 'Попробуйте ещё раз' });
+      }
+    });
   }, [refreshMe]);
 
   const doDemoLogin = async () => {
@@ -150,11 +169,17 @@ const Index = () => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const onVkLogin = () => {
-    toast({
-      title: 'Вход через ВКонтакте',
-      description: 'Добавьте ключи VK_APP_ID и VK_SECRET_KEY для активации',
-    });
+  const onVkLogin = async () => {
+    const redirect_uri = window.location.origin + window.location.pathname;
+    const res = await api.vkAuthUrl(redirect_uri);
+    if (res.url) {
+      window.location.href = res.url;
+    } else {
+      toast({
+        title: 'Вход через ВКонтакте недоступен',
+        description: 'Ключи VK ещё не сохранены в настройках',
+      });
+    }
   };
 
   const onContactSubmit = () => {

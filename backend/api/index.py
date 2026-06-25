@@ -59,6 +59,22 @@ def handler(event: dict, context) -> dict:
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     try:
+        # === URL для редиректа на ВКонтакте ===
+        if method == 'GET' and action == 'vk_auth_url':
+            vk_app_id = os.environ.get('VK_APP_ID', '')
+            redirect_uri = params.get('redirect_uri', '')
+            if not vk_app_id:
+                return _resp(503, {'error': 'VK_APP_ID not configured'})
+            vk_url = 'https://oauth.vk.com/authorize?' + urllib.parse.urlencode({
+                'client_id': vk_app_id,
+                'display': 'popup',
+                'redirect_uri': redirect_uri,
+                'scope': 'email',
+                'response_type': 'code',
+                'v': '5.131',
+            })
+            return _resp(200, {'url': vk_url})
+
         # === Авторизация ===
         if method == 'POST' and action == 'login':
             vk_code = body.get('code')

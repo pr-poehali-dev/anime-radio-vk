@@ -38,6 +38,10 @@ export interface ChatMessage {
 export const api = {
   demoLogin: (name: string) => req('login', 'POST', { name }),
   vkLogin: (data: { code: string; redirect_uri: string }) => req('login', 'POST', data),
+  vkAuthUrl: (redirect_uri: string) =>
+    fetch(`${API}?action=vk_auth_url&redirect_uri=${encodeURIComponent(redirect_uri)}`).then((r) =>
+      r.json()
+    ),
   me: () => req('me'),
   getMessages: () => req('messages'),
   sendMessage: (text: string, stars: number) => req('message', 'POST', { text, stars }),

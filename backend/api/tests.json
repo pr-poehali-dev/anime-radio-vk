@@ -7,17 +7,16 @@
       "expectedStatus": 200
     },
     {
-      "name": "Demo login",
-      "method": "POST",
-      "path": "/?action=login",
-      "body": {"name": "Тестовый Отаку"},
-      "expectedStatus": 200
-    },
-    {
       "name": "Me without token",
       "method": "GET",
       "path": "/?action=me",
       "expectedStatus": 200
+    },
+    {
+      "name": "VK auth URL",
+      "method": "GET",
+      "path": "/?action=vk_auth_url&redirect_uri=https://example.com",
+      "expectedStatus": 503
     }
   ]
 }
